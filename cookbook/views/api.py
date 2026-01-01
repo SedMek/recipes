@@ -2831,8 +2831,11 @@ def download_file(request, file_id):
             if not content_type:
                 content_type = 'audio/webm'  # Default fallback
 
-            response = HttpResponse(uf.file.file.read(), content_type=content_type)
+            # Use FileResponse for better streaming support and mobile compatibility
+            from django.http import FileResponse
+            response = FileResponse(uf.file.file, content_type=content_type)
             response['Content-Disposition'] = 'inline; filename="' + uf.name + '"'
+            response['Accept-Ranges'] = 'bytes'
             return response
 
         # Wrap non-audio files in ZIP for security
