@@ -17,6 +17,7 @@
                         </v-list-item>
                         <v-list-item prepend-icon="fas fa-plus-circle" @click="showTime = true" v-if="!showTime && step.time == 0">{{ $t('Time') }}</v-list-item>
                         <v-list-item prepend-icon="fas fa-plus-circle" @click="showFile = true" v-if="!showFile &&  step.file == null">{{ $t('File') }}</v-list-item>
+                        <v-list-item prepend-icon="fas fa-plus-circle" @click="showVoiceFile = true" v-if="!showVoiceFile && step.voiceFile == null">{{ $t('Voice Note') }}</v-list-item>
                         <v-list-item prepend-icon="fas fa-plus-circle" @click="showRecipe = true" v-if="!showRecipe && step.stepRecipe == null">{{ $t('Recipe') }}</v-list-item>
 
                         <v-list-item link>
@@ -52,6 +53,13 @@
                 </v-col>
                 <v-col cols="12" md="6" v-if="showFile || step.file != null">
                     <model-select model="UserFile" v-model="step.file"></model-select>
+                </v-col>
+                <v-col cols="12" v-if="showVoiceFile || step.voiceFile != null">
+                    <VoiceRecorder
+                        :existing-file="step.voiceFile"
+                        @file-uploaded="handleVoiceFileUploaded"
+                        @file-deleted="handleVoiceFileDeleted"
+                    />
                 </v-col>
             </v-row>
 
@@ -225,9 +233,10 @@
 
 <script setup lang="ts">
 import {nextTick, onMounted, ref} from 'vue'
-import {ApiApi, Ingredient, ParsedIngredient, Recipe, Step, Unit} from "@/openapi";
+import {ApiApi, Ingredient, ParsedIngredient, Recipe, Step, Unit, UserFileView} from "@/openapi";
 import StepMarkdownEditor from "@/components/inputs/StepMarkdownEditor.vue";
 import ModelSelect from "@/components/inputs/ModelSelect.vue";
+import VoiceRecorder from "@/components/inputs/VoiceRecorder.vue";
 import {useDisplay} from "vuetify";
 import {VueDraggable} from "vue-draggable-plus";
 import VClosableCardTitle from "@/components/dialogs/VClosableCardTitle.vue";
@@ -252,6 +261,7 @@ const showName = ref(false)
 const showTime = ref(false)
 const showRecipe = ref(false)
 const showFile = ref(false)
+const showVoiceFile = ref(false)
 
 const dialogMarkdownEditor = ref(false)
 const dialogIngredientEditor = ref(false)
@@ -268,6 +278,20 @@ function sortIngredients() {
     step.value.ingredients.forEach((value, index) => {
         value.order = index
     })
+}
+
+/**
+ * handle voice file upload
+ */
+function handleVoiceFileUploaded(file: UserFileView) {
+    step.value.voiceFile = file;
+}
+
+/**
+ * handle voice file deletion
+ */
+function handleVoiceFileDeleted() {
+    step.value.voiceFile = null;
 }
 
 /**

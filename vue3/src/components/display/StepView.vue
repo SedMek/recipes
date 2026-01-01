@@ -50,6 +50,13 @@
                 <v-img :src="step.file.preview" v-if="step.file.preview"></v-img>
                 <a :href="step.file.fileDownload" v-else>{{ $t('Download') }}</a>
             </template>
+            <template v-if="step.voiceFile">
+                <v-card-text>
+                    <audio controls :src="step.voiceFile.fileDownload" style="width: 100%; max-width: 500px;">
+                        {{ $t('Your browser does not support the audio element.') }}
+                    </audio>
+                </v-card-text>
+            </template>
         </template>
 
     </v-card>
@@ -82,7 +89,7 @@ const timerRunning = ref(false)
 const stepChecked = ref(false)
 
 const hasDetails = computed(() => {
-    return step.value.ingredients.length > 0 || (step.value.instruction != undefined && step.value.instruction.length > 0) || step.value.stepRecipeData != undefined || step.value.file != undefined
+    return step.value.ingredients.length > 0 || (step.value.instruction != undefined && step.value.instruction.length > 0) || step.value.stepRecipeData != undefined || step.value.file != undefined || step.value.voiceFile != undefined
 })
 
 </script>

@@ -88,6 +88,12 @@ export interface PatchedStep {
     file?: UserFileView;
     /**
      * 
+     * @type {UserFileView}
+     * @memberof PatchedStep
+     */
+    voiceFile?: UserFileView;
+    /**
+     * 
      * @type {number}
      * @memberof PatchedStep
      */
@@ -138,6 +144,7 @@ export function PatchedStepFromJSONTyped(json: any, ignoreDiscriminator: boolean
         'order': json['order'] == null ? undefined : json['order'],
         'showAsHeader': json['show_as_header'] == null ? undefined : json['show_as_header'],
         'file': json['file'] == null ? undefined : UserFileViewFromJSON(json['file']),
+        'voiceFile': json['voice_file'] == null ? undefined : UserFileViewFromJSON(json['voice_file']),
         'stepRecipe': json['step_recipe'] == null ? undefined : json['step_recipe'],
         'stepRecipeData': json['step_recipe_data'] == null ? undefined : json['step_recipe_data'],
         'numrecipe': json['numrecipe'] == null ? undefined : json['numrecipe'],
@@ -159,6 +166,7 @@ export function PatchedStepToJSON(value?: Omit<PatchedStep, 'instructionsMarkdow
         'order': value['order'],
         'show_as_header': value['showAsHeader'],
         'file': UserFileViewToJSON(value['file']),
+        'voice_file': UserFileViewToJSON(value['voiceFile']),
         'step_recipe': value['stepRecipe'],
         'show_ingredients_table': value['showIngredientsTable'],
     };

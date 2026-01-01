@@ -38,10 +38,11 @@ def get_filetype(name):
 def is_file_type_allowed(filename, image_only=False):
     is_file_allowed = False
     allowed_file_types = ['.pdf', '.docx', '.xlsx', '.css', '.mp4', '.mov']
+    allowed_audio_types = ['.mp3', '.wav', '.webm', '.m4a', '.ogg', '.aac']
     allowed_image_types = ['.png', '.jpg', '.jpeg', '.gif', '.webp']
     check_list = allowed_image_types
     if not image_only:
-        check_list += allowed_file_types
+        check_list += allowed_file_types + allowed_audio_types
 
     for file_type in check_list:
         if filename.lower().endswith(file_type):

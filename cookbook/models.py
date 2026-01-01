@@ -1,4 +1,5 @@
 import operator
+import os
 import pathlib
 import re
 import uuid
@@ -962,7 +963,8 @@ class Step(ExportModelOperationsMixin('step'), models.Model, PermissionModelMixi
     ingredients = models.ManyToManyField(Ingredient, blank=True)
     time = models.IntegerField(default=0, blank=True)
     order = models.IntegerField(default=0)
-    file = models.ForeignKey('UserFile', on_delete=models.PROTECT, null=True, blank=True)
+    file = models.ForeignKey('UserFile', on_delete=models.PROTECT, null=True, blank=True, related_name='step_files')
+    voice_file = models.ForeignKey('UserFile', on_delete=models.SET_NULL, null=True, blank=True, related_name='voice_step_files')
     show_as_header = models.BooleanField(default=True)
     show_ingredients_table = models.BooleanField(default=True)
     search_vector = SearchVectorField(null=True)
@@ -1581,6 +1583,12 @@ class UserFile(ExportModelOperationsMixin('user_files'), models.Model, Permissio
             return True
         except Exception:
             return False
+
+    def is_audio(self):
+        """Check if file is an audio file based on extension"""
+        audio_extensions = ['.mp3', '.wav', '.webm', '.m4a', '.ogg', '.aac']
+        ext = os.path.splitext(self.name)[1].lower()
+        return ext in audio_extensions
 
     def save(self, *args, **kwargs):
         if hasattr(self.file, 'file') and isinstance(self.file.file, UploadedFile) or isinstance(self.file.file, InMemoryUploadedFile):

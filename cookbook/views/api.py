@@ -2820,10 +2820,22 @@ def download_file(request, file_id):
     """
     function to download a user file securely (wrapping as zip to prevent any context based XSS problems)
     temporary solution until a real file manager is implemented
+    Audio files are served directly to allow playback in browser
     """
     try:
         uf = UserFile.objects.get(space=request.space, pk=file_id)
 
+        # Serve audio files directly for playback
+        if uf.is_audio():
+            content_type, _ = mimetypes.guess_type(uf.name)
+            if not content_type:
+                content_type = 'audio/webm'  # Default fallback
+
+            response = HttpResponse(uf.file.file.read(), content_type=content_type)
+            response['Content-Disposition'] = 'inline; filename="' + uf.name + '"'
+            return response
+
+        # Wrap non-audio files in ZIP for security
         in_memory = io.BytesIO()
         zf = ZipFile(in_memory, mode="w")
         zf.writestr(uf.file.name, uf.file.file.read())
