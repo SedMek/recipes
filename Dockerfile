@@ -30,6 +30,12 @@ RUN apk add --no-cache --virtual .build-deps gcc musl-dev postgresql-dev zlib-de
 #Copy project and execute it.
 COPY . ./
 
+# Build frontend assets
+RUN cd vue3 && \
+    npm ci && \
+    npm run build && \
+    cd ..
+
 # delete default nginx config and link it to tandoors config
 # create symlinks to access and error log to show them on stdout
 RUN rm -rf /etc/nginx/http.d && \
